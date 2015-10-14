@@ -1,0 +1,162 @@
+Django Tutorial Notes
+=====================
+
+Followed along with: https://docs.djangoproject.com/en/1.8/intro/tutorial01/
+
+## Help is available at:
+- irc://irc.freenode.net/django
+
+- https://docs.djangoproject.com/en/1.8/internals/mailing-lists/#django-users-mailing-list
+
+## General:
+- always good to use a virtual environment when developing for python, 
+  - virtualenv wrapper is good to manage your venv’s
+
+- Put your code in some directory outside of the document root, such as /home/mycode.
+
+- The development server automatically reloads Python code for each request as needed. You don’t need to restart the server for code changes to take effect. However, some actions like adding files don’t trigger a restart, so you’ll have to restart the server in these cases.
+
+- concept of apps vs. project; a project can have multiple apps
+
+- uses “Models” & “Views”, 
+  - former is for database interaction & management, 
+  - the later is for rendering in HTML
+
+- Django has it’s own form of templating using {% code to run %} & {{ variable }}
+
+- Name spacing is important in Django, eg: URL names, template directories, etc.
+  - helps to avoid conflict when multiple apps have similar names for things
+
+
+## Part One
+
+### Starting a new Project
+
+- create a new project called “mysite” by doing: `django-admin startproject mysite`
+  
+- will create a new project directory, eg:
+
+```
+mysite/
+    manage.py
+    mysite/
+        __init__.py
+        settings.py
+        urls.py
+        wsgi.py
+```
+
+- `mysite/settings.py` is where you change the database settings, installed apps, etc.
+
+- to create necessary app db tables do `python manage.py migrate`
+
+- to run a dev server do: `python manage.py runserver`
+
+- Django has some differences than plain old python, eg: datetime vs. django.utils.timezone
+
+### Creating a new App:
+- for an app called “polls”, do `python manage.py startapp polls`
+
+* The first step in writing a database Web app in Django is to define your models – essentially, your database layout, with additional metadata.
+
+### Migrations
+
+* Migrations are how Django stores changes to your models (and thus your database schema) - they’re just files on disk. You can read the migration for your new model if you like; it’s the file polls/migrations/0001_initial.py. Don’t worry, you’re not expected to read them every time Django makes one, but they’re designed to be human-editable in case you want to manually tweak how Django changes things.
+
+### SQL Migrate
+
+- `sqlmigrate` takes migration names and returns their SQL:
+
+- `python manage.py sqlmigrate polls 0001`
+
+- doesn’t actually run the migration on your database - it just prints it to the screen so that you can see what SQL Django thinks is required. It’s useful for checking what Django is going to do or if you have database administrators who require SQL scripts for changes.
+
+- running `python manage.py check` will look for issues without making migrations or altering databases
+
+### Migrate
+
+`python manage.py migrate`
+
+*The migrate command takes all the migrations that haven’t been applied (Django tracks which ones are applied using a special table in your database called django_migrations) and runs them against your database - essentially, synchronizing the changes you made to your models with the schema in the database.*
+
+*Migrations are very powerful and let you change your models over time, as you develop your project, without the need to delete your database or tables and make new ones - it specializes in upgrading your database live, without losing data.*
+
+Three-step guide to making model changes:  
+
+1. update your models.py module
+2. Run python manage.py makemigrations to create migrations for those changes
+3. Run python manage.py migrate to apply those changes to the database.
+
+### Interacting with the Django API
+- To invoke the Python shell, use this command: `python manage.py shell`
+
+*FYI ^ `manage.py` sets the `DJANGO_SETTINGS_MODULE` environment variable, which gives Django the Python import path to your `mysite/settings.py` file.*
+
+*It’s important to `add __str__()` methods to your models (`__unicode__()` for python 2),*
+
+- The API automatically follows relationships as far as you need.
+- Use double underscores to separate relationships.
+
+#### Related:
+  - https://docs.djangoproject.com/en/1.8/topics/db/queries/#field-lookups-intro
+  - https://docs.djangoproject.com/en/1.8/ref/models/relations/
+  - https://docs.djangoproject.com/en/1.8/topics/db/queries/
+
+## Part Two: The Admin Site
+
+### creating an admin user
+
+- running `python manage.py createsuperuser` will allow you to create a user with admin rights
+
+- enter user name (eg: “admin”), and a pw (eg: “django”)
+
+- then visit `localhost:8000/admin`
+
+Two Types of editable content: users and groups, provided by `django.contrib.auth`
+
+### Make the app modifiable in the admin
+- need to tell the admin that model objects have an admin interface
+
+
+### Customizing Templates
+- Django’s templates live in: `django/contrib/admin/templates/`, find out where django is by doing the following: 
+
+```
+python -c "
+import sys
+sys.path = sys.path[1:]
+import django
+print(django.__path__)"
+```
+
+- to alter the admin template copy it from the django application directory (above) to a custom  `templates` directory in the root of the project.
+
+- more info: https://docs.djangoproject.com/en/1.8/topics/templates/#template-loading
+
+## Part 3: Views
+
+- views for the polls app live inside of `polls/views.py`
+
+- need to create a `urls.py` inside the `polls/` dir
+
+- point the root URLconf at the `polls.urls` module in `mysite/urls.py`
+
+- note: the url() function is passed four arguments, two required: regex and view, and two optional: kwargs, and name. 
+
+- regexes are used to match URL patterns but not domain name or GET / POST parameters
+
+### Adding templates to your app:
+*Your project’s TEMPLATES setting describes how Django will load and render templates. The default settings file configures a DjangoTemplates backend whose APP_DIRS option is set to True. By convention DjangoTemplates looks for a “templates” subdirectory in each of the INSTALLED_APPS. This is how Django knows to find the polls templates even though we didn’t modify the DIRS option, as we did in Tutorial 2.*
+
+- Namespacing URL names in mysite/urls.py & polls/templates/polls/index.html
+ - avoids conflicts when apps have similarly named files
+
+## Part Four: Forms
+
+- altered `polls/detail.html`
+
+- use method="post". This tip isn’t specific to Django; it’s just good Web development practice.
+
+- In short, all POST forms that are targeted at internal URLs should use the {% csrf_token %} template tag.
+
+- create a Django view that handles the submitted data and does something with it.

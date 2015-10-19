@@ -26,6 +26,7 @@ Followed along with: https://docs.djangoproject.com/en/1.8/intro/tutorial01/
 
 - Name spacing is important in Django, eg: URL names, template directories, etc.
   - helps to avoid conflict when multiple apps have similar names for things
+  - helps avoiding hardcoded, tightly-coupled approaches
 
 
 ## Part One
@@ -157,6 +158,30 @@ print(django.__path__)"
 
 - use method="post". This tip isn’t specific to Django; it’s just good Web development practice.
 
+- avoiding “Cross Site Request Forgeries”; Django has an easy to use system to protect against it
+
 - In short, all POST forms that are targeted at internal URLs should use the {% csrf_token %} template tag.
 
 - create a Django view that handles the submitted data and does something with it.
+
+- `request.POST` (in polls/views.py) is a dictionary-like object; access submitted data by key name; values are always strings.
+  
+   - FYI Django also provides request.GET for accessing GET data in the same way
+
+- KeyError will be raised if `choice` wasn’t provided in POST data.
+
+- good practice to always return an `HttpResponseRedirect` after successfully dealing with POST data
+
+- reverse() function in `HttpResponseRedirect` helps avoid hardcoding a URL in the view function. Passed the name of view to give control to & the variable portion of URL pattern that points to that view; eg: ‘/polls/3/results/‘
+
+- `request` is an HttpRequest object. See request and response documentation.
+
+- After somebody votes in a question, the vote() view redirects to the results page for the question. 
+
+- “views” represent a common case of basic Web development: 
+  - getting data from the database according to a parameter passed in the URL, 
+  - loading a template and 
+  - returning the rendered template. 
+
+- Because this is so common, Django provides a shortcut, called the “generic views” system.
+

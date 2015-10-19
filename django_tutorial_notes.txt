@@ -178,6 +178,9 @@ print(django.__path__)"
 
 - After somebody votes in a question, the vote() view redirects to the results page for the question. 
 
+
+### Generic Views
+
 - “views” represent a common case of basic Web development: 
   - getting data from the database according to a parameter passed in the URL, 
   - loading a template and 
@@ -185,3 +188,6 @@ print(django.__path__)"
 
 - Because this is so common, Django provides a shortcut, called the “generic views” system.
 
+- Generic views abstract common patterns to the point where you don’t even need to write Python code to write an app.
+
+- so we can delete a bunch of our own code. We’ll just have to take a few steps to make the conversion. We will:

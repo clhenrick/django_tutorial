@@ -289,3 +289,15 @@ True
 
 - update the template using `{% load staticfiles %}` and the link for the style sheet where `href={% static ‘polls/style.css’ %}`
 
+## Where to Go Next:
+- introductory material: https://docs.djangoproject.com/en/1.8/intro/
+- topic guides: https://docs.djangoproject.com/en/1.8/topics/
+- how-to-guides: https://docs.djangoproject.com/en/1.8/howto/
+- reference: https://docs.djangoproject.com/en/1.8/ref/
+- guides for public deployment: https://docs.djangoproject.com/en/1.8/howto/deployment/
+- deployment checklist: https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
+
+Searching documentation:
+- `grep -r <search_term> /path/to/django/docs/`
+
+## Making Your App Reusable

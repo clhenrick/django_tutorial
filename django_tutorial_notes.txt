@@ -5,8 +5,11 @@ Followed along with: https://docs.djangoproject.com/en/1.8/intro/tutorial01/
 
 ## Help is available at:
 - irc://irc.freenode.net/django
-
 - https://docs.djangoproject.com/en/1.8/internals/mailing-lists/#django-users-mailing-list
+
+## Questions on the Tutorial
+- not quite understanding the `reverse` method for responses http redirects
+- how do you know when your program has enough tests?
 
 ## General:
 - always good to use a virtual environment when developing for python, 
@@ -216,3 +219,63 @@ Process:
 
 ## Part 5: Automated Testing
 
+### Why Test?  
+- it’s good development practice
+- saves time
+- picks up bugs you may not have seen
+- helps when working collaboratively with others on larger, more complex projects
+
+- “test-driven development” : writing tests before writing code; but it is fine writing tests before or after writing code.
+
+### Example Testing Polls App: 
+- With the Polls App, a question with a future datetime returns True when asked if published recently, eg:
+
+```
+>>> import datetime
+>>> from django.utils import timezone
+>>> from polls.models import Question
+>>> future_question = Question(pub_date=timezone.now() + datetime.timedelta(days=30))
+>>> future_question.was_published_recently()
+True
+```
+
+- The above could be turned into an automated test in `tests.py`
+- run tests by doing: `python manage.py test polls`
+- “The test informs us which test failed and even the line on which the failure occurred.”
+- tests create a temporary database which is destroyed after the tests have been run
+
+### Testing a View
+- Django test Client simulates a user interacting with the code at the view level
+
+- can use it in tests.py or via the shell
+
+- start by setting up test environment in the shell: `setup_test_environment()`
+
+- this “ installs a template renderer which will allow us to examine some additional attributes on responses such as response.context that otherwise wouldn’t be available”
+
+- “Note that this method does not setup a test database, so the following will be run against the existing database and the output may differ slightly depending on what questions you already created.”
+
+- no such thing as having too many tests!
+  - “For the most part, you can write a test once and then forget about it”
+  - “in testing redundancy is a good thing.”
+  - “Sometimes tests will need to be updated.”
+
+### Good Rules of Thumb include having:
+- a separate TestClass for each model or view
+- a separate test method for each set of conditions you want to test
+- test method names that describe their function
+
+### Further Testing
+- tools like Selenium can be used to test in browser (HTML rendering & server code testing!)
+
+- Django includes LiveServerTestCase to facilitate integration with Selenium
+
+- for a complex app, running tests automatically with every commit for “continuous integration” can be helpful for partially automating quality control
+
+- checking “code coverage” can be helpful to spot untested parts of an app and identify fragile or dead code. If it can’t be tested it should probably be refactored or removed.
+ 
+- see Integration with coverage.py: https://docs.djangoproject.com/en/1.8/topics/testing/advanced/#topics-testing-code-coverage
+
+- Testing in Django: https://docs.djangoproject.com/en/1.8/topics/testing/
+
+## Part 6: Static Files Management

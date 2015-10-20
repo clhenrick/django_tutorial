@@ -279,3 +279,13 @@ True
 - Testing in Django: https://docs.djangoproject.com/en/1.8/topics/testing/
 
 ## Part 6: Static Files Management
+- static files in Django refer to images, javascript, css
+
+- live in a directory called “static” within the app directory
+
+- STATICFILES_FINDERS setting contains a list of finders to find static files from different sources
+
+- static file namespacing: eg putting files in `polls/static/polls/` rather than `polls/static/`
+
+- update the template using `{% load staticfiles %}` and the link for the style sheet where `href={% static ‘polls/style.css’ %}`
+
